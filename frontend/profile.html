@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Atlas | Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-black text-white p-10 font-sans flex items-center justify-center min-h-screen">
+
+    <div class="glass p-10 rounded-3xl w-full max-w-5xl border border-gray-800 grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- SIDEBAR -->
+        <div class="text-center border-r border-gray-800 pr-8">
+            
+            <!-- Profile Photo -->
+            <div class="relative w-32 h-32 mx-auto mb-4 group cursor-pointer" onclick="document.getElementById('pfPhoto').click()">
+                <img id="currentPhoto" src="" class="w-full h-full rounded-full object-cover border-4 border-gray-800 hidden">
+                <div id="photoPlaceholder" class="w-full h-full bg-gray-800 rounded-full flex items-center justify-center text-5xl text-sky-500">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <!-- Hover Overlay -->
+                <div class="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-xs font-bold uppercase tracking-widest text-white backdrop-blur-sm">
+                    <i class="fa-solid fa-camera mr-1"></i> Change
+                </div>
+            </div>
+            <input id="pfPhoto" type="file" class="hidden" onchange="uploadPhoto()">
+            
+            <h2 id="dispEmail" class="text-sm text-gray-400 mb-2">loading...</h2>
+            <div id="planBadge" class="bg-gray-800 px-4 py-2 rounded-full text-xs font-bold inline-block mb-6 border border-gray-700">FREE PLAN</div>
+            
+            <!-- Company Logo (Premium Only) -->
+            <div id="logoSection" class="hidden border-t border-gray-800 pt-6">
+                <p class="text-[10px] font-bold text-gray-500 mb-3 uppercase tracking-widest">Company Branding</p>
+                <div class="relative group cursor-pointer w-full h-16 bg-black/40 rounded-lg flex items-center justify-center border border-gray-700 hover:border-sky-500 transition" onclick="document.getElementById('logoFile').click()">
+                    <img id="currentLogo" class="h-10 object-contain hidden">
+                    <div id="logoPlaceholder" class="text-xs text-gray-500"><i class="fa-solid fa-upload mr-1"></i> Upload Logo</div>
+                </div>
+                <input id="logoFile" type="file" class="hidden" onchange="uploadLogo()">
+            </div>
+        </div>
+
+        <!-- MAIN FORM -->
+        <div class="md:col-span-2 pl-4">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-2xl font-bold">Account Settings</h1>
+                <a href="dashboard.html" class="text-xs text-gray-500 hover:text-white flex items-center gap-1 transition"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
+            </div>
+
+            <div class="space-y-6 mb-10">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Full Name</label>
+                    <input id="fullName" class="w-full p-4 bg-black/50 rounded-xl border border-gray-700 text-white focus:border-sky-500 outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Company Name</label>
+                    <input id="companyName" class="w-full p-4 bg-black/50 rounded-xl border border-gray-700 text-white focus:border-sky-500 outline-none transition">
+                </div>
+                <div class="flex justify-end">
+                    <button onclick="save()" class="bg-sky-600 hover:bg-sky-500 text-white px-6 py-2 rounded-lg font-bold shadow-lg transition transform hover:scale-105 text-sm">Save Changes</button>
+                </div>
+            </div>
+
+            <!-- History Log -->
+            <h3 class="text-lg font-bold mb-4 text-gray-400 uppercase text-xs tracking-widest border-b border-gray-800 pb-2">Activity History</h3>
+            <div class="bg-black/40 rounded-xl p-2 h-40 overflow-y-auto border border-gray-800 custom-scroll" id="historyLog">
+                <p class="text-gray-600 text-xs italic p-4 text-center">Loading history...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = "http://127.0.0.1:8000"; 
+        const uid = localStorage.getItem('atlas_user_id');
+
+        window.onload = async () => {
+            if(!uid) window.location.href="login.html";
+            
+            // 1. Fetch User Data
+            const res = await fetch(`${API}/get_user/${uid}`);
+            const u = await res.json();
+            
+            document.getElementById("dispEmail").innerText = u.email;
+            document.getElementById("fullName").value = u.full_name;
+            document.getElementById("companyName").value = u.company;
+            
+            // 2. Profile Photo (With Cache Busting)
+            if(u.pf_photo) {
+                document.getElementById("currentPhoto").src = `${u.pf_photo}?t=${new Date().getTime()}`;
+                document.getElementById("currentPhoto").classList.remove("hidden");
+                document.getElementById("photoPlaceholder").classList.add("hidden");
+            }
+
+            // 3. Premium Features
+            if(u.plan === "premium") {
+                document.getElementById("planBadge").innerText = "PREMIUM ACCOUNT";
+                document.getElementById("planBadge").className = "bg-yellow-500 text-black px-4 py-2 rounded-full text-xs font-bold inline-block mb-6 shadow-lg shadow-yellow-500/20";
+                
+                document.getElementById("logoSection").classList.remove("hidden");
+                if(u.logo) {
+                    document.getElementById("currentLogo").src = `${u.logo}?t=${new Date().getTime()}`;
+                    document.getElementById("currentLogo").classList.remove("hidden");
+                    document.getElementById("logoPlaceholder").classList.add("hidden");
+                }
+            }
+
+            // 4. Load History
+            loadHistory();
+        };
+
+        async function save() {
+            const fd = new FormData(); fd.append("user_id", uid);
+            fd.append("full_name", document.getElementById("fullName").value);
+            fd.append("company", document.getElementById("companyName").value);
+            await fetch(`${API}/update_profile`, { method: "POST", body: fd });
+            alert("Profile Updated!");
+        }
+
+        async function uploadPhoto() {
+            const fd = new FormData(); fd.append("user_id", uid); fd.append("file", document.getElementById("pfPhoto").files[0]);
+            const res = await fetch(`${API}/upload_pf`, { method: "POST", body: fd });
+            if(res.ok) location.reload();
+        }
+
+        async function uploadLogo() {
+            const fd = new FormData(); fd.append("user_id", uid); fd.append("file", document.getElementById("logoFile").files[0]);
+            const res = await fetch(`${API}/upload_logo`, { method: "POST", body: fd });
+            if(res.ok) location.reload();
+        }
+
+        async function loadHistory() {
+            const res = await fetch(`${API}/user_history/${uid}`);
+            const data = await res.json();
+            const log = document.getElementById("historyLog");
+            
+            if(data.length === 0) {
+                log.innerHTML = `<div class="text-center text-gray-600 text-xs py-10">No agents deployed yet.</div>`;
+                return;
+            }
+
+            log.innerHTML = data.map(i => `
+                <div class="flex justify-between items-center text-xs py-3 border-b border-gray-800 last:border-0 hover:bg-white/5 px-2 rounded transition">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-robot text-sky-500"></i>
+                        <span class="text-gray-300 font-bold">${i.name}</span>
+                        <span class="text-gray-600">deployed</span>
+                    </div>
+                    <span class="text-gray-500 font-mono">${i.created_at || "Just Now"}</span>
+                </div>`
+            ).join('');
+        }
+    </script>
+</body>
+</html>

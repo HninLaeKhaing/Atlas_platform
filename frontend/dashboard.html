@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
+    <title>Atlas | Admin Dashboard</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .results-scroll::-webkit-scrollbar { width: 4px; }
+        .results-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        .results-scroll::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 2px; }
+    </style>
+</head>
+<body class="bg-black text-white min-h-screen p-6 md:p-10 font-sans selection:bg-sky-500 selection:text-white">
+
+    <!-- REALISTIC PAYMENT MODAL -->
+    <div id="payModal" class="hidden fixed inset-0 bg-black/95 z-50 flex items-center justify-center backdrop-blur-md">
+        <div class="glass p-0 rounded-2xl w-full max-w-md border border-gray-700 shadow-2xl overflow-hidden">
+            
+            <div class="bg-gray-900 p-6 border-b border-gray-800 flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-crown text-yellow-500"></i> Upgrade to Pro</h2>
+                    <p class="text-xs text-gray-400">Secure SSL 256-bit Encryption</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-2xl font-bold text-white">$27.00</p>
+                    <p class="text-[10px] text-gray-500 uppercase">Per Month</p>
+                </div>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Payment Method</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="selectPay('card')" id="btnCard" class="flex items-center justify-center gap-2 p-3 rounded-lg border border-sky-500 bg-sky-900/20 text-white transition"><i class="fa-regular fa-credit-card"></i> Card</button>
+                        <button onclick="selectPay('bank')" id="btnBank" class="flex items-center justify-center gap-2 p-3 rounded-lg border border-gray-700 bg-gray-800 text-gray-400 hover:bg-gray-700 transition"><i class="fa-solid fa-building-columns"></i> Bank</button>
+                    </div>
+                </div>
+
+                <div id="cardForm" class="space-y-3">
+                    <div><label class="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Cardholder Name</label><input type="text" placeholder="John Doe" class="w-full bg-black border border-gray-700 rounded p-2 text-sm text-white focus:border-sky-500 outline-none"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Card Number</label><div class="relative"><input type="text" placeholder="4242 4242 4242 4242" class="w-full bg-black border border-gray-700 rounded p-2 text-sm text-white focus:border-sky-500 outline-none font-mono pl-10"><i class="fa-brands fa-cc-visa absolute left-3 top-2.5 text-gray-400"></i></div></div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Expiry</label><input type="text" placeholder="MM/YY" class="w-full bg-black border border-gray-700 rounded p-2 text-sm text-white focus:border-sky-500 outline-none text-center"></div>
+                        <div><label class="block text-[10px] font-bold text-gray-500 mb-1 uppercase">CVC</label><input type="password" placeholder="123" class="w-full bg-black border border-gray-700 rounded p-2 text-sm text-white focus:border-sky-500 outline-none text-center"></div>
+                    </div>
+                </div>
+
+                <div id="bankForm" class="hidden space-y-3">
+                    <div><label class="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Account Holder</label><input type="text" placeholder="Company / Personal Name" class="w-full bg-black border border-gray-700 rounded p-2 text-sm text-white focus:border-sky-500 outline-none"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Routing Number</label><input type="text" placeholder="000000000" class="w-full bg-black border border-gray-700 rounded p-2 text-sm text-white focus:border-sky-500 outline-none font-mono"></div>
+                    <div><label class="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Account Number</label><input type="text" placeholder="000123456789" class="w-full bg-black border border-gray-700 rounded p-2 text-sm text-white focus:border-sky-500 outline-none font-mono"></div>
+                </div>
+
+                <button onclick="processPay()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg transition shadow-lg mt-4 flex justify-center items-center gap-2"><i class="fa-solid fa-lock text-xs"></i> Pay $27.00</button>
+                <p class="text-center text-[10px] text-gray-500 cursor-pointer hover:text-white mt-2" onclick="document.getElementById('payModal').classList.add('hidden')">Cancel Transaction</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="flex justify-between items-center mb-10 max-w-6xl mx-auto">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-layer-group text-sky-400 text-3xl"></i>
+            <h1 class="text-3xl font-bold tracking-tighter">ATLAS <span class="text-sky-400">DASHBOARD</span></h1>
+        </div>
+        <div class="flex gap-3">
+            <!-- PROFILE BUTTON ADDED HERE -->
+            <a href="profile.html" class="text-gray-400 hover:text-white transition flex items-center gap-2 text-sm font-bold uppercase tracking-widest border border-gray-700 px-4 py-2 rounded-full hover:bg-gray-800">
+                <i class="fa-solid fa-user-gear"></i> Profile
+            </a>
+            <button onclick="logout()" class="text-gray-400 hover:text-white transition flex items-center gap-2 text-sm font-bold uppercase tracking-widest border border-gray-700 px-4 py-2 rounded-full hover:bg-gray-800">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto">
+        
+        <!-- STATS & PLAN SECTION -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <!-- Plan Info -->
+            <div class="glass p-6 rounded-2xl border border-gray-800 relative overflow-hidden">
+                <h3 class="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">Current Plan</h3>
+                <div class="flex justify-between items-end">
+                    <h2 class="text-3xl font-bold text-white" id="planName">LOADING...</h2>
+                    <button id="upgradeBtn" onclick="document.getElementById('payModal').classList.remove('hidden')" class="hidden bg-gradient-to-r from-yellow-500 to-orange-500 text-black px-4 py-1 rounded text-xs font-bold animate-pulse shadow-lg">UPGRADE</button>
+                </div>
+                <!-- Usage Bar -->
+                <div class="w-full h-2 bg-gray-800 rounded-full mt-4 overflow-hidden">
+                    <div id="usageBar" class="h-full bg-sky-500 w-0 transition-all duration-1000"></div>
+                </div>
+                <p id="usageText" class="text-xs text-gray-500 mt-2 text-right">0/5 Used</p>
+            </div>
+
+            <!-- Analytics Chart -->
+            <div class="glass p-6 rounded-2xl border border-gray-800">
+                <h3 class="text-gray-400 text-xs font-bold uppercase tracking-widest mb-2">Outcomes</h3>
+                <div class="h-24 flex justify-center"><canvas id="outcomeChart"></canvas></div>
+            </div>
+
+            <!-- Total Stats -->
+            <div class="glass p-6 rounded-2xl border border-gray-800 flex flex-col justify-center items-center">
+                <h3 class="text-5xl font-bold text-white mb-1" id="totalInterviews">0</h3>
+                <p class="text-gray-500 uppercase text-xs tracking-widest">Candidates</p>
+            </div>
+        </div>
+
+        <!-- CREATE AGENT FORM -->
+        <div class="glass p-8 rounded-2xl mb-12 border border-gray-800 shadow-[0_0_50px_rgba(14,165,233,0.1)]">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-full bg-sky-900/50 flex items-center justify-center text-sky-400">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+                <h2 class="text-xl font-bold">Deploy New AI Interviewer</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Agent Name</label>
+                    <input id="name" placeholder="e.g. Senior Java Recruiter" class="w-full p-3 bg-black/50 rounded-xl border border-gray-700 focus:border-sky-500 outline-none text-white transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Persona / Role</label>
+                    <input id="role" placeholder="e.g. Strict & Technical" class="w-full p-3 bg-black/50 rounded-xl border border-gray-700 focus:border-sky-500 outline-none text-white transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Voice Persona</label>
+                    <select id="voice" class="w-full p-3 bg-black/50 rounded-xl border border-gray-700 focus:border-sky-500 outline-none text-white transition cursor-pointer">
+                        <option value="en-US-AriaNeural">🇺🇸 English (Professional)</option>
+                        <option value="hi-IN-SwaraNeural">🇮🇳 Hindi (Standard)</option>
+                        <option value="my-MM-ThihaNeural">🇲🇲 Burmese (Myanmar)</option>
+                        <option value="de-DE-KatjaNeural">🇩🇪 German (Standard)</option>
+                        <option value="es-ES-ElviraNeural">🇪🇸 Spanish (Standard)</option>
+                        <option value="fr-FR-DeniseNeural">🇫🇷 French (Standard)</option>
+                        <option value="ja-JP-NanamiNeural">🇯🇵 Japanese (Standard)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Interview Rules & Context (Text)</label>
+                <textarea id="manualRules" rows="3" placeholder="Paste job description, exam questions, or interview criteria here..." class="w-full p-3 bg-black/50 rounded-xl border border-gray-700 focus:border-sky-500 outline-none text-white transition text-sm"></textarea>
+            </div>
+
+            <div class="mb-8">
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">OR Upload Rules (TXT File)</label>
+                <div class="relative group">
+                    <input id="file" type="file" class="block w-full text-sm text-gray-400 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-sky-900 file:text-sky-300 hover:file:bg-sky-800 cursor-pointer border border-gray-700 rounded-xl bg-black/30 p-2">
+                </div>
+            </div>
+            
+            <button onclick="createAgent()" class="bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-500 hover:to-blue-600 text-white px-10 py-4 rounded-xl font-bold shadow-lg shadow-sky-900/30 transition transform hover:scale-[1.02] flex items-center gap-3">
+                <i class="fa-solid fa-rocket"></i> Create & Deploy Agent
+            </button>
+        </div>
+
+        <!-- SECTION 2: AGENT LIST -->
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+            <i class="fa-solid fa-robot text-gray-500"></i> Active Interviewers
+        </h2>
+        
+        <div id="agentList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="glass p-10 text-center text-gray-500 rounded-xl border border-dashed border-gray-800">
+                Loading Agents...
+            </div>
+        </div>
+
+    </div>
+
+    <!-- LOGIC SCRIPT -->
+    <script>
+        const API = "http://127.0.0.1:8000";
+        const userId = localStorage.getItem('atlas_user_id');
+        let chartInstance = null;
+
+        window.onload = () => {
+            if(!userId) { window.location.href = "login.html"; } 
+            else { loadDashboardData(); }
+        };
+
+        function logout() {
+            localStorage.removeItem('atlas_user_id');
+            window.location.href = "login.html";
+        }
+
+        async function createAgent() {
+            const name = document.getElementById('name').value;
+            const role = document.getElementById('role').value;
+            const voice = document.getElementById('voice').value;
+            const manualRules = document.getElementById('manualRules').value;
+            const file = document.getElementById('file').files[0];
+
+            if(!name || !role) { alert("Name and Role are required."); return; }
+
+            const fd = new FormData();
+            fd.append('user_id', userId);
+            fd.append('name', name);
+            fd.append('role', role);
+            fd.append('voice_id', voice);
+            fd.append('manual_rules', manualRules);
+            if(file) fd.append('file', file);
+
+            try {
+                const res = await fetch(`${API}/create_agent`, { method: 'POST', body: fd });
+                if(res.ok) {
+                    alert("✅ Agent Deployed Successfully!");
+                    // Clear inputs
+                    document.getElementById('name').value = "";
+                    document.getElementById('role').value = "";
+                    document.getElementById('manualRules').value = "";
+                    document.getElementById('file').value = "";
+                    loadDashboardData();
+                } else { alert("Error creating agent."); }
+            } catch(e) { alert("Backend connection failed."); }
+        }
+
+        // --- PAYMENT UI LOGIC ---
+        function selectPay(method) {
+            if(method === 'card') {
+                document.getElementById('cardForm').classList.remove('hidden');
+                document.getElementById('bankForm').classList.add('hidden');
+                
+                document.getElementById('btnCard').classList.replace('border-gray-700', 'border-sky-500');
+                document.getElementById('btnCard').classList.replace('bg-gray-800', 'bg-sky-900/20');
+                document.getElementById('btnCard').classList.replace('text-gray-400', 'text-white');
+                
+                document.getElementById('btnBank').classList.replace('border-sky-500', 'border-gray-700');
+                document.getElementById('btnBank').classList.replace('bg-sky-900/20', 'bg-gray-800');
+                document.getElementById('btnBank').classList.replace('text-white', 'text-gray-400');
+            } else {
+                document.getElementById('cardForm').classList.add('hidden');
+                document.getElementById('bankForm').classList.remove('hidden');
+                
+                document.getElementById('btnBank').classList.replace('border-gray-700', 'border-sky-500');
+                document.getElementById('btnBank').classList.replace('bg-gray-800', 'bg-sky-900/20');
+                document.getElementById('btnBank').classList.replace('text-gray-400', 'text-white');
+                
+                document.getElementById('btnCard').classList.replace('border-sky-500', 'border-gray-700');
+                document.getElementById('btnCard').classList.replace('bg-sky-900/20', 'bg-gray-800');
+                document.getElementById('btnCard').classList.replace('text-white', 'text-gray-400');
+            }
+        }
+
+        async function processPay() {
+            const btn = document.querySelector("#payModal button.bg-green-600");
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> Processing...';
+            
+            await new Promise(r => setTimeout(r, 2000)); // Simulate transaction time
+            
+            const fd = new FormData(); fd.append("user_id", userId);
+            await fetch(`${API}/upgrade_plan`, { method: "POST", body: fd });
+            alert("🎉 Payment Successful! Welcome to Premium.");
+            location.reload();
+        }
+
+        // --- MASTER LOAD FUNCTION ---
+        async function loadDashboardData() {
+            try {
+                const res = await fetch(`${API}/my_agents/${userId}?t=${Date.now()}`);
+                if(!res.ok) throw new Error("Failed to load");
+                const data = await res.json();
+                
+                const isPremium = data.plan === "premium";
+                document.getElementById("planName").innerText = isPremium ? "PREMIUM" : "FREE";
+                document.getElementById("planName").className = isPremium ? "text-3xl font-bold text-yellow-400" : "text-3xl font-bold text-white";
+                
+                if(!isPremium) document.getElementById("upgradeBtn").classList.remove("hidden");
+                else document.getElementById("upgradeBtn").classList.add("hidden");
+
+                const limit = isPremium ? "Unlimited" : "5";
+                document.getElementById("usageText").innerText = `${data.usage} / ${limit} Used`;
+                const pct = isPremium ? 100 : Math.min((data.usage/5)*100, 100);
+                document.getElementById("usageBar").style.width = `${pct}%`;
+                if(data.usage >= 5 && !isPremium) document.getElementById("usageBar").classList.replace("bg-sky-500", "bg-red-500");
+
+                renderAgents(data.agents);
+
+            } catch(e) { console.error(e); }
+        }
+
+        async function renderAgents(agents) {
+            const list = document.getElementById('agentList');
+            list.innerHTML = "";
+            
+            if(!agents || agents.length === 0) {
+                list.innerHTML = `<div class="col-span-3 text-center text-gray-600 py-10 italic">No agents found. Deploy one above!</div>`;
+                return;
+            }
+
+            let total=0, hires=0, rejects=0, waits=0;
+
+            for (const agent of agents) {
+                const sRes = await fetch(`${API}/agent_sessions/${agent.id}?t=${Date.now()}`);
+                const sessions = await sRes.json();
+                
+                let candidatesHtml = "";
+                
+                sessions.forEach(s => {
+                    total++;
+                    let color = "text-gray-400";
+                    const rec = s.recommendation ? s.recommendation.toLowerCase() : "";
+                    
+                    if(rec.includes("strong") || rec.includes("hire")) { color = "text-green-400"; hires++; }
+                    else if(rec.includes("not") || rec.includes("reject")) { color = "text-red-400"; rejects++; }
+                    else { color = "text-yellow-400"; waits++; }
+
+                    let watchBtn = s.recording_url ? `<a href="${s.recording_url}" target="_blank" class="ml-2 text-sky-400 hover:text-white" title="Watch Video"><i class="fa-solid fa-play-circle"></i></a>` : "";
+                    let resumeBtn = s.resume_path ? `<a href="${s.resume_path}" target="_blank" class="ml-2 text-red-400 hover:text-white" title="View Resume"><i class="fa-solid fa-file-pdf"></i></a>` : "";
+                    let cheatIcon = s.cheat_count >= 3 ? `<i class="fa-solid fa-triangle-exclamation text-red-500 ml-1" title="Cheating Detected"></i>` : "";
+
+                    candidatesHtml += `
+                    <div class="py-3 border-b border-gray-800 last:border-0 hover:bg-white/5 px-2 transition rounded group/row">
+                        <div class="flex justify-between items-center text-xs mb-1">
+                            <div class="flex items-center gap-1">
+                                <span class="font-bold text-white w-20 truncate" title="${s.candidate_name}">${s.candidate_name}</span>
+                                ${cheatIcon} ${watchBtn} ${resumeBtn}
+                            </div>
+                            <span class="${color} font-bold text-right uppercase text-[10px]">${s.recommendation} (${s.final_score}%)</span>
+                        </div>
+                        <div class="text-[10px] text-gray-500 pl-2 border-l-2 border-gray-700 truncate group-hover/row:whitespace-normal group-hover/row:overflow-visible">
+                            ${s.feedback || "Processing..."}
+                        </div>
+                    </div>`;
+                });
+
+                const link = `http://127.0.0.1:5500/frontend/interview.html?id=${agent.id}`;
+                const shareText = `Apply now: ${agent.name}`;
+                const tw = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(link)}`;
+                const ln = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(link)}`;
+
+                list.innerHTML += `
+                <div class="glass p-6 rounded-2xl border border-gray-800 flex flex-col h-full hover:border-sky-500/30 transition group">
+                    
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h3 class="font-bold text-lg text-white group-hover:text-sky-400 transition">${agent.name}</h3>
+                            <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">${agent.role}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <a href="${ln}" target="_blank" class="text-gray-600 hover:text-blue-500"><i class="fa-brands fa-linkedin text-lg"></i></a>
+                            <a href="${tw}" target="_blank" class="text-gray-600 hover:text-white"><i class="fa-brands fa-x-twitter text-lg"></i></a>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-black/40 rounded-lg p-2 mb-4 flex-grow border border-gray-700/50 relative">
+                        <h4 class="text-[10px] font-bold text-gray-500 uppercase mb-2 px-2 sticky top-0 bg-black/80 pb-1 backdrop-blur-sm z-10">Candidates</h4>
+                        <div class="h-40 overflow-y-auto results-scroll">
+                            ${candidatesHtml || "<div class='text-gray-600 text-xs text-center mt-10 italic'>No interviews yet.</div>"}
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 mt-auto">
+                        <button onclick="navigator.clipboard.writeText('${link}'); alert('Link Copied!')" class="bg-gray-800 hover:bg-gray-700 text-gray-300 py-2 rounded-lg text-xs font-bold transition">Copy Link</button>
+                        <a href="${link}" target="_blank" class="bg-sky-600 hover:bg-sky-500 text-white py-2 rounded-lg text-xs font-bold text-center shadow-lg transition">LAUNCH</a>
+                    </div>
+                </div>`;
+            }
+            
+            updateCharts(hires, rejects, waits, total);
+        }
+
+        function updateCharts(h, r, w, total) {
+            document.getElementById('totalInterviews').innerText = total;
+            
+            const ctx = document.getElementById('outcomeChart').getContext('2d');
+            if(chartInstance) chartInstance.destroy();
+            
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Hired', 'Rejected', 'Wait'],
+                    datasets: [{
+                        data: [h, r, w],
+                        backgroundColor: ['#4ade80', '#f87171', '#facc15'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { 
+                    plugins: { legend: { display: false } },
+                    cutout: '75%',
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+    </script>
+</body>
+</html>

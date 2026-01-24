@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
+    <title>Atlas | The Universal AI Interviewer</title>
+    
+    <!-- Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        html { scroll-behavior: smooth; }
+        
+        /* 3D Floating Animation */
+        @keyframes float3D {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        
+        /* The Avatar Container */
+        .avatar-container {
+            animation: float3D 6s ease-in-out infinite;
+            perspective: 1000px;
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+        .glass-card:hover {
+            border-color: rgba(56, 189, 248, 0.5);
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .code-block {
+            font-family: 'Courier New', Courier, monospace;
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 0 0 8px 8px;
+            padding: 1.5rem;
+            color: #a5b4fc;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body class="bg-black text-white font-sans selection:bg-sky-500 selection:text-white">
+
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 left-0 w-full z-50 glass border-b border-white/10 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2 font-bold text-xl tracking-wider">
+                <i class="fa-solid fa-layer-group text-sky-400"></i> ATLAS
+            </div>
+            <div class="hidden md:flex gap-8 text-sm font-medium text-gray-300">
+                <a href="#features" class="hover:text-white transition">Features</a>
+                <a href="#process" class="hover:text-white transition">Process</a>
+                <a href="#pricing" class="hover:text-white transition">Premium</a>
+                <a href="#rules" class="hover:text-white transition">Documentation</a>
+                <a href="#demo" class="hover:text-white transition">Demo</a>
+            </div>
+            <a href="login.html" class="bg-white text-black px-6 py-2 rounded-full font-bold hover:bg-sky-400 hover:text-white transition shadow-lg">
+                Login / Start
+            </a>
+        </div>
+    </nav>
+
+    <!-- 1. HERO SECTION -->
+    <section class="pt-40 pb-20 px-6 relative overflow-hidden">
+        <!-- Background Glows -->
+        <div class="absolute top-20 right-0 w-[600px] h-[600px] bg-sky-600/10 rounded-full blur-[120px] -z-10"></div>
+        <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] -z-10"></div>
+
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            
+            <!-- Left: Text -->
+            <div class="text-left z-10">
+                <div class="inline-block px-4 py-1 rounded-full border border-sky-500/30 bg-sky-900/10 text-sky-400 text-xs font-bold mb-6 tracking-widest uppercase">
+                    The Future of Hiring
+                </div>
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                    Hire Talent Without <br> <span class="text-gradient">Human Bias</span>
+                </h1>
+                <p class="text-xl text-gray-400 mb-8 leading-relaxed">
+                    Atlas is the world's first <strong>Universal AI Interviewer</strong>. 
+                    Create custom agents to conduct voice-based, proctored interviews at infinite scale.
+                </p>
+                <div class="flex gap-4">
+                    <a href="login.html" class="bg-sky-600 hover:bg-sky-500 text-white px-8 py-4 rounded-xl font-bold text-lg transition shadow-lg shadow-sky-900/30 flex items-center gap-2">
+                        <i class="fa-solid fa-robot"></i> Create Agent
+                    </a>
+                    <a href="#features" class="border border-white/20 hover:bg-white/10 px-8 py-4 rounded-xl font-bold text-lg transition">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right: 3D Animated Avatar -->
+            <div class="flex justify-center md:justify-start pl-0 md:pl-10">
+                <div class="avatar-container relative w-64 h-64 md:w-80 md:h-80">
+                    
+                    <!-- 1. Glowing Back Circle -->
+                    <div class="absolute inset-0 bg-sky-500/20 rounded-full blur-2xl animate-pulse"></div>
+                    
+                    <!-- 2. Glass Sphere -->
+                    <div class="absolute inset-4 bg-gradient-to-br from-white/10 to-transparent rounded-full border border-white/20 backdrop-blur-sm shadow-2xl flex items-center justify-center">
+                        <!-- 3. The Robot Icon -->
+                        <i class="fa-solid fa-robot text-8xl md:text-9xl text-white drop-shadow-[0_0_15px_rgba(56,189,248,0.8)]"></i>
+                    </div>
+
+                    <!-- 4. Floating Elements -->
+                    <div class="absolute -top-4 -right-4 w-16 h-16 bg-gray-800/80 rounded-xl border border-gray-600 flex items-center justify-center shadow-lg backdrop-blur-md animate-bounce" style="animation-duration: 3s;">
+                        <i class="fa-solid fa-check text-green-400 text-2xl"></i>
+                    </div>
+                    <div class="absolute bottom-4 -left-4 w-14 h-14 bg-gray-800/80 rounded-xl border border-gray-600 flex items-center justify-center shadow-lg backdrop-blur-md animate-bounce" style="animation-duration: 4s;">
+                        <i class="fa-solid fa-microphone text-sky-400 text-xl"></i>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 2. UNIQUE FEATURES -->
+    <section id="features" class="py-24 bg-black/50 border-y border-gray-900">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-4xl font-bold mb-16 text-center">Why Atlas is <span class="text-gradient">Unique</span></h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass-card p-8 rounded-3xl">
+                    <div class="w-14 h-14 bg-green-900/30 rounded-2xl flex items-center justify-center text-green-400 text-2xl mb-6"><i class="fa-solid fa-scale-balanced"></i></div>
+                    <h3 class="text-2xl font-bold mb-4">Zero Bias</h3>
+                    <p class="text-gray-400 leading-relaxed">Atlas evaluates purely on the content of the answer against uploaded rules. It blinds the process to gender, race, or accent.</p>
+                </div>
+                <div class="glass-card p-8 rounded-3xl">
+                    <div class="w-14 h-14 bg-purple-900/30 rounded-2xl flex items-center justify-center text-purple-400 text-2xl mb-6"><i class="fa-solid fa-bolt"></i></div>
+                    <h3 class="text-2xl font-bold mb-4">Instant Results</h3>
+                    <p class="text-gray-400 leading-relaxed">No more waiting weeks. Admins get a detailed Score, Recommendation (Hire/Reject), and Feedback Summary immediately.</p>
+                </div>
+                <div class="glass-card p-8 rounded-3xl">
+                    <div class="w-14 h-14 bg-red-900/30 rounded-2xl flex items-center justify-center text-red-400 text-2xl mb-6"><i class="fa-solid fa-eye"></i></div>
+                    <h3 class="text-2xl font-bold mb-4">AI Proctoring</h3>
+                    <p class="text-gray-400 leading-relaxed">Advanced Computer Vision detects tab switching, multiple faces, and suspicious gaze to ensure integrity.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. HOW IT WORKS (Technical Flow) -->
+    <section class="py-24 max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold mb-4">How it Works</h2>
+            <p class="text-gray-400">The Technical Architecture</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="glass-card p-8 rounded-2xl text-center">
+                <div class="mb-4 text-sky-500 text-4xl"><i class="fa-solid fa-file-code"></i></div>
+                <h3 class="font-bold text-lg mb-2">1. Context Injection</h3>
+                <p class="text-sm text-gray-400">Admin uploads a raw text file (Rules). This is injected into the AI's system prompt dynamically via RAG.</p>
+            </div>
+            <div class="glass-card p-8 rounded-2xl text-center">
+                <div class="mb-4 text-sky-500 text-4xl"><i class="fa-solid fa-comments"></i></div>
+                <h3 class="font-bold text-lg mb-2">2. Real-Time Logic</h3>
+                <p class="text-sm text-gray-400">Candidate speaks. Browser converts Speech-to-Text. Backend processes logic. Text-to-Speech returns audio.</p>
+            </div>
+            <div class="glass-card p-8 rounded-2xl text-center">
+                <div class="mb-4 text-sky-500 text-4xl"><i class="fa-solid fa-chart-pie"></i></div>
+                <h3 class="font-bold text-lg mb-2">3. Automated Grading</h3>
+                <p class="text-sm text-gray-400">The AI reviews the full transcript against the Rules and generates a Report Card with scores.</p>
+            </div>
+                <div class="glass-card p-8 rounded-2xl text-center">
+                <div class="mb-4 text-sky-500 text-4xl"><i class="fa-solid fa-linkedin"></i></div>
+                <h3 class="font-bold text-lg mb-2">4. Share in Linkedin</h3>
+                <p class="text-sm text-gray-400">Share your agent link in your linkedin directly and launch your candidate interviews.</p>
+            </div>
+                <div class="glass-card p-8 rounded-2xl text-center">
+                <div class="mb-4 text-sky-500 text-4xl"><i class="fa-solid fa-video"></i></div>
+                <h3 class="font-bold text-lg mb-2">5. Record & Resume</h3>
+                <p class="text-sm text-gray-400">Recording the candidate record for the rechecking accurancy and saving the upload resume .</p>
+            </div>
+                <div class="glass-card p-8 rounded-2xl text-center">
+                <div class="mb-4 text-sky-500 text-4xl"><i class="fa-solid fa-signal"></i></div>
+                <h3 class="font-bold text-lg mb-2">6. Cheating Detection</h3>
+                <p class="text-sm text-gray-400">Terminated the interview immediately after 3 times cheating violations.</p>
+            </div>
+        </div>
+    </section>
+
+ <!-- 4. PRICING (Premium) -->
+    <section id="pricing" class="py-24 bg-gradient-to-b from-transparent to-blue-900/20">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-12">Simple Pricing</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="glass p-8 rounded-3xl border border-white/10">
+                    <h3 class="text-2xl font-bold">Free Plan</h3>
+                    <p class="text-4xl font-bold mt-4 mb-6">$0<span class="text-sm text-gray-400">/mo</span></p>
+                    <ul class="text-left space-y-3 text-sm text-gray-400 mb-8">
+                        <li><i class="fa-solid fa-check text-green-500 mr-2"></i> 1 Agent</li>
+                        <li><i class="fa-solid fa-check text-green-500 mr-2"></i> 5 Interviews/mo</li>
+                        <li><i class="fa-solid fa-xmark text-red-500 mr-2"></i> No Custom Logo</li>
+                    </ul>
+                </div>
+                <div class="glass p-8 rounded-3xl border border-cyan-500/50 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-cyan-500 text-black text-xs font-bold px-3 py-1">POPULAR</div>
+                    <h3 class="text-2xl font-bold text-cyan-400">Premium</h3>
+                    <p class="text-4xl font-bold mt-4 mb-6">$27<span class="text-sm text-gray-400">/mo</span></p>
+                    <ul class="text-left space-y-3 text-sm text-gray-300 mb-8">
+                        <li><i class="fa-solid fa-check text-cyan-400 mr-2"></i> Unlimited Agents</li>
+                        <li><i class="fa-solid fa-check text-cyan-400 mr-2"></i> Unlimited Interviews</li>
+                        <li><i class="fa-solid fa-check text-cyan-400 mr-2"></i> Custom Company Logo</li>
+                        <li><i class="fa-solid fa-check text-cyan-400 mr-2"></i> Priority Support</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- 4. HOW TO CREATE AGENT (Step-by-Step) -->
+    <section id="process" class="py-24 bg-gray-900/30 border-y border-gray-800">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-16">Admin Workflow</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
+                <!-- Connecting Line -->
+                <div class="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-gray-800 -z-10 transform -translate-y-1/2"></div>
+
+                <div class="glass p-6 rounded-2xl border border-gray-800 bg-black text-center">
+                    <div class="w-10 h-10 bg-sky-600 rounded-full flex items-center justify-center text-white font-bold mx-auto mb-4 relative z-10">1</div>
+                    <h4 class="font-bold mb-2">Login</h4>
+                    <p class="text-xs text-gray-400">Create an account on the Atlas Dashboard.</p>
+                </div>
+
+                <div class="glass p-6 rounded-2xl border border-gray-800 bg-black text-center">
+                    <div class="w-10 h-10 bg-sky-600 rounded-full flex items-center justify-center text-white font-bold mx-auto mb-4 relative z-10">2</div>
+                    <h4 class="font-bold mb-2">Define Persona</h4>
+                    <p class="text-xs text-gray-400">Name your agent (e.g. "Biology Prof") and choose a voice.</p>
+                </div>
+
+                <div class="glass p-6 rounded-2xl border border-gray-800 bg-black text-center">
+                    <div class="w-10 h-10 bg-sky-600 rounded-full flex items-center justify-center text-white font-bold mx-auto mb-4 relative z-10">3</div>
+                    <h4 class="font-bold mb-2">Upload Rules</h4>
+                    <p class="text-xs text-gray-400">Paste your questions and scoring criteria.</p>
+                </div>
+
+                <div class="glass p-6 rounded-2xl border border-gray-800 bg-black text-center">
+                    <div class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white font-bold mx-auto mb-4 relative z-10">4</div>
+                    <h4 class="font-bold mb-2">Deploy</h4>
+                    <p class="text-xs text-gray-400">Get a unique link to send to candidates.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. RULES DOCUMENTATION -->
+    <section id="rules" class="py-24 relative">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row gap-12 items-start">
+                
+                <!-- Text Info -->
+                <div class="md:w-1/2 sticky top-24">
+                    <h2 class="text-3xl font-bold mb-6 text-sky-400">How to Train Your Agent</h2>
+                    <p class="text-gray-300 mb-6 text-lg">
+                        Atlas allows you to create a custom interviewer by simply uploading a <strong>Rules File (.txt)</strong>.
+                    </p>
+                    <p class="text-gray-400 mb-8 leading-relaxed">
+                        The AI follows your structure strictly. Use the template on the right to ensure the best results.
+                    </p>
+                    
+                    <ul class="space-y-4 text-sm text-gray-400">
+                        <li class="flex gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> Define the Persona (Who is the AI?)</li>
+                        <li class="flex gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> Set Scoring Criteria (Points system)</li>
+                        <li class="flex gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> List Questions (Or random pool)</li>
+                        <li class="flex gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> Define "Hire/Reject" Logic</li>
+                    </ul>
+                </div>
+
+                <!-- Code Block -->
+                <div class="md:w-1/2 w-full shadow-2xl">
+                    <div class="flex justify-between items-center bg-gray-800 px-4 py-3 rounded-t-lg border border-gray-700">
+                        <span class="text-xs text-gray-400 font-mono"><i class="fa-regular fa-file-lines mr-2"></i>rules.txt</span>
+                        <button class="text-xs bg-black/50 px-3 py-1 rounded text-sky-400 hover:text-white transition" onclick="navigator.clipboard.writeText(document.getElementById('codeSample').innerText); alert('Template Copied!')">Copy Template</button>
+                    </div>
+                    <pre id="codeSample" class="code-block">
+INTERVIEWER PERSONA:
+You are "Sarah", a Senior Java Developer. You are strict but fair.
+
+SCORING CRITERIA (100 Points):
+1. Technical Knowledge (50 pts): Must explain HashMap internals.
+2. Communication (30 pts): Clear english, no stuttering.
+3. Problem Solving (20 pts): Approaches debugging logically.
+
+INTERVIEW STRUCTURE:
+1. Intro: Ask them to introduce themselves.
+2. Tech Check: Ask "How does Garbage Collection work?"
+3. Scenario: Ask "How do you handle a slow API endpoint?"
+4. Conclusion: Thank them and end.
+
+DECISION LOGIC:
+- Score > 80: STRONGLY RECOMMEND
+- Score < 50: REJECT
+- Answer "I don't know" to Tech Check: IMMEDIATE REJECT
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. CANDIDATE EXPERIENCE -->
+    <section id="demo" class="py-24 bg-gradient-to-b from-black to-gray-900">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-12">The Interview Experience</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <!-- Mockup -->
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-sky-600 to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+                    <div class="relative glass p-6 rounded-2xl border border-gray-700 aspect-video flex flex-col gap-4">
+                        <div class="flex gap-4 h-full">
+                            <div class="w-1/3 bg-gray-800/50 rounded-lg flex items-center justify-center border border-gray-700"><i class="fa-solid fa-robot text-4xl text-gray-600"></i></div>
+                            <div class="w-1/3 bg-gray-800/50 rounded-lg flex items-center justify-center border border-gray-700"><i class="fa-solid fa-user text-4xl text-gray-600"></i></div>
+                            <div class="w-1/3 bg-gray-800/50 rounded-lg p-2 border border-gray-700 flex flex-col gap-2">
+                                <div class="h-2 w-full bg-gray-700 rounded"></div>
+                                <div class="h-2 w-3/4 bg-gray-700 rounded"></div>
+                                <div class="h-2 w-1/2 bg-gray-700 rounded"></div>
+                            </div>
+                        </div>
+                        <div class="h-12 bg-gray-800/80 rounded-lg flex items-center justify-center gap-4 text-xs text-gray-500">
+                            <i class="fa-solid fa-microphone"></i> Speaking...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features List -->
+                <div class="text-left space-y-8">
+                    <div>
+                        <h4 class="text-xl font-bold text-sky-400 mb-2"><i class="fa-solid fa-comments mr-2"></i> Real-Time Transcript</h4>
+                        <p class="text-gray-400">Candidates see exactly what the AI hears. The conversation history scrolls automatically beside the video feed.</p>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold text-sky-400 mb-2"><i class="fa-solid fa-video mr-2"></i> Secure Proctoring</h4>
+                        <p class="text-gray-400">The system monitors eye movement, presence, and tab switching. Violations are logged and flagged.</p>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold text-sky-400 mb-2"><i class="fa-solid fa-pen-to-square mr-2"></i> Editable Input</h4>
+                        <p class="text-gray-400">Speak naturally, or type your answer. You can edit the text before sending it to ensure accuracy.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. FOOTER -->
+    <footer class="border-t border-gray-800 bg-black py-16 px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+            <div class="col-span-1 md:col-span-2">
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-layer-group text-sky-400 text-2xl"></i>
+                    <span class="text-2xl font-bold tracking-tighter">ATLAS</span>
+                </div>
+                <p class="text-gray-500 text-sm max-w-sm leading-relaxed">
+                    Atlas is an open-source AI platform designed to democratize recruitment. 
+                    We use Generative AI to create fair, consistent, and scalable interview experiences for everyone.
+                </p>
+            </div>
+            
+            <div>
+                <h4 class="font-bold mb-6 text-white uppercase tracking-wider text-xs">Platform</h4>
+                <ul class="space-y-3 text-sm text-gray-500">
+                    <li><a href="login.html" class="hover:text-sky-400 transition">Login</a></li>
+                    <li><a href="login.html" class="hover:text-sky-400 transition">Register</a></li>
+                    <li><a href="#rules" class="hover:text-sky-400 transition">Documentation</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-bold mb-6 text-white uppercase tracking-wider text-xs">Contact</h4>
+                <ul class="space-y-3 text-sm text-gray-500">
+                    <li><a href="#" class="hover:text-sky-400 transition">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-sky-400 transition">Terms of Service</a></li>
+                    <li><a href="mailto:support@atlas.ai" class="hover:text-sky-400 transition">support@atlas.ai</a></li>
+                    <li><span class="text-gray-600">+91 8527722843</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="text-center text-gray-800 text-xs pt-12 border-t border-gray-900 mt-12">
+            &copy; 2026 Atlas AI Platform. All rights reserved.
+        </div>
+    </footer>
+
+</body>
+</html>

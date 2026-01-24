@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+sqlalchemy
+google-generativeai
+python-multipart
+python-dotenv
+gTTS
+passlib[bcrypt]
+python-jose
+bcrypt==4.0.1
+pypdf
+edge-tts

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atlas | Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="flex items-center justify-center h-screen overflow-hidden">
+
+    <!-- 3D Decoration -->
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-sky-500/20 rounded-full blur-[100px]"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-[100px]"></div>
+    </div>
+
+    <div class="glass p-10 rounded-3xl w-full max-w-md text-center border border-white/10 shadow-2xl">
+        <div class="mb-8">
+            <i class="fa-solid fa-layer-group text-5xl text-sky-400 mb-4"></i>
+            <h1 class="text-4xl font-bold tracking-tight">ATLAS</h1>
+            <p class="text-gray-400 text-sm mt-2">Universal AI Recruitment</p>
+        </div>
+        
+        <div class="space-y-4">
+            <div class="relative">
+                <i class="fa-solid fa-envelope absolute left-4 top-4 text-gray-500"></i>
+                <input id="email" type="text" placeholder="Email Address" class="w-full pl-12 p-3 bg-black/40 rounded-xl border border-gray-700 outline-none focus:border-sky-500 transition text-white">
+            </div>
+            <div class="relative">
+                <i class="fa-solid fa-lock absolute left-4 top-4 text-gray-500"></i>
+                <input id="password" type="password" placeholder="Password" class="w-full pl-12 p-3 bg-black/40 rounded-xl border border-gray-700 outline-none focus:border-sky-500 transition text-white">
+            </div>
+        </div>
+
+        <button onclick="auth('login')" class="w-full bg-gradient-to-r from-sky-600 to-blue-600 text-white py-3 rounded-xl font-bold mt-8 shadow-lg shadow-sky-900/50 hover:scale-[1.02] transition">
+            Sign In
+        </button>
+        <button onclick="auth('register')" class="w-full bg-transparent border border-gray-700 text-gray-400 py-3 rounded-xl font-bold mt-3 hover:bg-white/5 transition">
+            Create Account
+        </button>
+        
+        <p id="statusMsg" class="mt-6 text-xs text-red-400 min-h-[20px]"></p>
+    </div>
+
+    <script>
+        const API = "http://127.0.0.1:8000";
+        async function auth(type) {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            if(!email || !password) { document.getElementById('statusMsg').innerText = "Please fill all fields"; return; }
+
+            const fd = new FormData(); fd.append('email', email); fd.append('password', password);
+            try {
+                const res = await fetch(`${API}/${type}`, { method: 'POST', body: fd });
+                const data = await res.json();
+                if(res.ok) {
+                    if(type === 'register') alert("Account Created! Login now.");
+                    else {
+                        localStorage.setItem('atlas_user_id', data.user_id);
+                        window.location.href = 'dashboard.html';
+                    }
+                } else { document.getElementById('statusMsg').innerText = data.detail || "Error"; }
+            } catch(e) { document.getElementById('statusMsg').innerText = "Backend Offline"; }
+        }
+    </script>
+</body>
+</html>
